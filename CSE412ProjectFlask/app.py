@@ -4,9 +4,10 @@ import psycopg2 #pip install psycopg2
 import psycopg2.extras
  
 app = Flask(__name__)
+app.secret_key = "alanh"
  
 DB_HOST = "localhost"
-DB_NAME = "CSE412ProjectDatabase_v3"
+DB_NAME = "Testing"
 DB_USER = "postgres"
 DB_PASS = "password"
  
