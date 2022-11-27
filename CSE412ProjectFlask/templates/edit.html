@@ -1,0 +1,68 @@
+//templates/edit.html
+{% extends "layout.html" %}
+{% block body %}
+  <div class="row">
+    <div class="col-md-4 offset-md-4">
+      <div class="card card-body">
+        <form action="/update/{{everything.voterid}}" method="POST">
+          <div class="form-group">
+            <input type="text" name="first_name" value="{{everything.first_name}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="last_name" value="{{everything.last_name}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="date_of_birth" value="{{everything.date_of_birth}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="party" value="{{everything.party}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="gender" value="{{everything.gender}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="ethnicity" value="{{everything.ethnicity}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="religion" value="{{everything.religion}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="voterid" value="{{everything.voterid}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="posid" value="{{everything.posid}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="entered_term" value="{{everything.entered_term}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="end_term" value="{{everything.end_term}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="district" value="{{everything.district}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="class" value="{{everything.class}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="senator_title" value="{{everything.senator_title}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="rep_title" value="{{everything.rep_title}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="office_address" value="{{everything.office_address}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="text" name="website" value="{{everything.website}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
