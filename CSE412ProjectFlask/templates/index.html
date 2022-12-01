@@ -1,7 +1,7 @@
 //templates/index.html
 {% extends "layout.html" %}
 {% block body %}
- <div class="row"><h3>Government Officials</h3></div>
+ <div class="row"><h1>Government Officials</h1></div>
   <div class="row">
     <div class="col-md-4">
       {% with messages = get_flashed_messages()  %}
@@ -40,6 +40,9 @@
             <input type="text" class="form-control" name="religion" placeholder="Religion">
           </div>
           <div class="form-group">
+            <input type="text" class="form-control" name="voterid" placeholder="Voter ID">
+          </div>
+          <div class="form-group">
             <input type="text" class="form-control" name="posid" placeholder="Position ID">
           </div>
           <div class="form-group">
@@ -67,7 +70,7 @@
             <input type="text" class="form-control" name="website" placeholder="Website">
           </div>
           <button class="btn btn-primary btn-block">
-            Save 
+            Add Entry
           </button>
         </form>
       </div>
@@ -98,7 +101,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for row in list_users %}
+          {% for row in listPersons %}
           <tr>
             <td>{{row[0]}}</td>
             <td>{{row[1]}}</td>

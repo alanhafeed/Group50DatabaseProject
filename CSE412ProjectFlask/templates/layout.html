@@ -15,7 +15,9 @@
     <nav class="navbar navbar-dark bg-dark">
       <a class="navbar-brand" href="/">Government Position Interface</a>
     </nav>
-  
+
+    <img src = {{plot_url}} alt = "Chart can't display"
+
     <div class="container pt-4">
       {% block body %}
       {% endblock %}
@@ -27,7 +29,7 @@ if(btnDelete) {
   const btnArray = Array.from(btnDelete);
   btnArray.forEach((btn) => {
     btn.addEventListener('click', (e) => {
-      if(!confirm('Are you sure you want to delete it?')){
+      if(!confirm('Are you sure you want to delete this entry?')){
         e.preventDefault();
       }
     });
