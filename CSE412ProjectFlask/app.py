@@ -4,16 +4,12 @@ import numpy as np
 import psycopg2 #pip install psycopg2 
 import psycopg2.extras
 import psycopg2.extras
-import pandas as pd
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
  
 app = Flask(__name__)
 app.secret_key = 'secret key'
  
 DB_HOST = "localhost"
-DB_NAME = "CSE412ProjectDatabase_v3"
+DB_NAME = "CSE412ProjectDatabase"
 DB_USER = "postgres"
 DB_PASS = "password"
  
@@ -27,25 +23,13 @@ def Index():
     listPersons = cur.fetchall()
     return render_template('index.html', listPersons = listPersons)
 
-@app.route('/get_plot', methods=['GET', 'POST'])
-def get_plot():
-    if request.method == "POST":
-        party = request.form['party']
-        data = {}
-        plt.pie(party)
-        plt.show()
-        plt.title("Parties")
-        plt.savefig('static/my_plot.png')
-        return render_template('layout.html', plot_url = "static/my_plot.png", data = data)
-    else:
-        return render_template('layout.html')
-    
  
 @app.route('/add_person', methods=['POST'])
 def add_person():
     try:
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         if request.method == 'POST':
+            state_name = request.form['state_name']
             first_name = request.form['first_name']
             last_name = request.form['last_name']
             date_of_birth = request.form['date_of_birth']
@@ -63,26 +47,35 @@ def add_person():
             rep_title = request.form['rep_title']
             office_address = request.form['office_address']
             website = request.form['website']
-            cur.execute("INSERT INTO everything (first_name, last_name, date_of_birth, party, gender, ethnicity, religion, voterid, posid, entered_term, end_term, district, Class, senator_title, rep_title, office_address, website) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (first_name, last_name, date_of_birth, party, gender, ethnicity, religion, voterid, posid, entered_term, end_term, district, Class, senator_title, rep_title, office_address, website))
-            conn.commit()
+            cur.execute("INSERT INTO everything (state_name, first_name, last_name, date_of_birth, party, gender, ethnicity, religion, voterid, posid, entered_term, end_term, district, Class, senator_title, rep_title, office_address, website) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (state_name, first_name, last_name, date_of_birth, party, gender, ethnicity, religion, voterid, posid, entered_term, end_term, district, Class, senator_title, rep_title, office_address, website))
+            #conn.commit()
             flash('Person Added successfully')
     except Exception as error:
         print ("Oops! An exception has occured:", error)
         print ("Exception TYPE:", type(error))
     return redirect(url_for('Index'))
+
+
+@app.route('/edit_person/<voterid>', methods=['GET'])
+def edit_person(voterid):
+    try:
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = """SELECT * FROM everything WHERE voterid = %s"""
+        cur.execute(query, (voterid,))
+        data = cur.fetchall()
+        cur.close()
+        return render_template('edit.html', everything = data[0])
+    except Exception as error:
+        print ("Oops! An exception has occured:", error)
+        print ("Exception TYPE:", type(error))
  
-@app.route('/edit/<voterid>', methods = ['POST', 'GET'])
-def get_person(voterid):
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.execute('SELECT * FROM everything WHERE voterid = {0}'.format(voterid))
-    data = cur.fetchall()
-    cur.close()
-    print(data[0])
-    return render_template('edit.html', everything = data[0])
- 
+    return "Failed."
+
+
 @app.route('/update/<voterid>', methods=['POST'])
 def update_person(voterid):
     if request.method == 'POST':
+        state_name = request.form['state_name']
         first_name = request.form['first_name']
         last_name = request.form['last_name']
         date_of_birth = request.form['date_of_birth']
@@ -100,38 +93,26 @@ def update_person(voterid):
         office_address = request.form['office_address']
         website = request.form['website']
          
-        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("""
-            UPDATE everything
-            SET first_name = %s,
-                last_name = %s,
-                date_of_birth = %s
-                party = %s,
-                gender = %s,
-                ethnicity = %s,
-                religion = %s,
-                posid = %s,
-                entered_term = %s,
-                end_term = %s,
-                district = %s,
-                class = %s,
-                senator_title = %s,
-                rep_title = %s,
-                office_address = %s,
-                website = %s
-            WHERE voterid = %s
-        """, (first_name, last_name, date_of_birth, party, gender, ethnicity, religion, voterid, posid, entered_term, end_term, district, Class, senator_title, rep_title, office_address, website))
-        flash('Person Updated Successfully')
-        conn.commit()
+        try:
+            cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            query = """UPDATE everything SET state_name = %s, first_name = %s, last_name = %s, date_of_birth = %s, party = %s, gender = %s, ethnicity = %s, religion = %s, posid = %s, entered_term = %s, end_term = %s, district = %s, class = %s, senator_title = %s, rep_title = %s, office_address = %s, website = %s WHERE voterid = %s"""
+            aTuple =  (state_name, first_name, last_name, date_of_birth, party, gender, ethnicity, religion, posid, entered_term, end_term, district, Class, senator_title, rep_title, office_address, website, voterid)
+            cur.execute(query, aTuple)
+            flash('Person Updated Successfully')
+            #conn.commit()
+        except Exception as error:
+            print ("Oops! An exception has occured:", error)
+            print ("Exception TYPE:", type(error))
         return redirect(url_for('Index'))
 
-@app.route('/delete/<string:voterid>', methods = ['GET','POST'])
+@app.route('/delete/<voterid>', methods = ['POST', 'GET'])
 def delete_person(voterid):
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.execute('DELETE FROM everything WHERE voterid = {0}'.format(voterid))
-    conn.commit()
+    cur.execute("DELETE FROM everything WHERE voterid = %s", (voterid,))
+    #conn.commit()
     flash('Person Removed Successfully')
     return redirect(url_for('Index'))
- 
+
+
 if __name__ == "__main__":
     app.run(debug=True)
